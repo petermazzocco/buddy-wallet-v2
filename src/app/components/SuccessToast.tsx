@@ -15,7 +15,7 @@ export default function SuccessToast({ message }: { message: string }) {
     <div>
       {showToast && (
         <div className="toast toast-end z-50">
-          <div className="alert alert-info">
+          <div className="alert alert-success">
             <div>
               <span>{message}</span>
             </div>

@@ -11,7 +11,7 @@ import { Connected } from "./Connected";
 import DeployAccount from "./DeployAccount";
 import ErrorToast from "./ErrorToast";
 import { TokenboundClient } from "@tokenbound/sdk";
-import { GetBytecodeReturnType } from "viem";
+import ExecuteCall from "./ExecuteCall";
 
 export default function NFTs() {
   const [nfts, setNfts] = useState<OwnedNFT[]>([]); // NFTs owned by the connected address
@@ -77,6 +77,7 @@ export default function NFTs() {
   }, [nfts]);
 
   // Find the ERC6551 address from the selected NFT
+  // Check if the ERC6551 address is deployed via bytecode
   const handleAddress = async (tokenContract: string, tokenId: string) => {
     try {
       let tba = "";
@@ -99,30 +100,30 @@ export default function NFTs() {
     }
   };
 
-  // Check if the ERC6551 address is deployed by checking the bytecode
-  // If the bytecode is empty, the address is not deployed
-  // If the bytecode is not empty, the address is deployed
-  async function checkDeployed() {
-    try {
-      // Check if the ERC721 address is deployed by passing buddy address
-      const bytecode: GetBytecodeReturnType = await providerClient.getBytecode({
-        address: buddy as Address,
-      });
-      console.log(bytecode);
+  /**
+   * @dev Check if the ERC721 address is deployed
+   * @returns deployed boolean
+   */
+  useEffect(() => {
+    async function fetchBytecode() {
+      try {
+        const bytecode = await providerClient.getBytecode({
+          address: buddy as Address,
+        });
+        // If the bytecode is undefined, the address is not deployed
+        if (bytecode === undefined) {
+          setDeployed(false);
 
-      // If the bytecode is undefined, the address is not deployed
-      if (bytecode == undefined) {
-        setDeployed(false);
-        // If the bytecode has a value, the address is deployed
-      } else if (bytecode != undefined) {
-        setDeployed(true);
+          // If the bytecode has a value, the address is deployed
+        } else if (bytecode !== undefined) {
+          setDeployed(true);
+        }
+      } catch (err: any) {
+        console.log(err?.message);
       }
-      console.log(deployed);
-    } catch (err: any) {
-      console.log(err?.message);
-      setErrorMsg("An error occured while deploying the address");
     }
-  }
+    fetchBytecode();
+  }, [buddy]);
 
   // Logic to open and close the modal
   const openModal = () => {
@@ -162,11 +163,6 @@ export default function NFTs() {
                 src={nft.media[0]?.gateway}
                 className="rounded-lg object-center object-cover w-80 h-80"
                 alt={nft.title}
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  e.currentTarget.src = "../public/img/fallback.jpeg";
-                  e.currentTarget.className =
-                    "rounded-lg object-center object-cover w-80 h-80";
-                }}
               />
 
               <button
@@ -175,7 +171,6 @@ export default function NFTs() {
                   setSelectedNft(index);
                   openModal();
                   handleAddress(nft.contract.address, nft.tokenId);
-                  checkDeployed();
                 }}
                 className="btn btn-primary"
               >
@@ -213,19 +208,27 @@ export default function NFTs() {
                         <div className="grid xs:grid-cols-1 md:grid-cols-1 xs:space-x-0 md:space-x-4">
                           <div className="col-span-1">
                             <div className="relative">
-                              <Image
-                                width={300}
-                                height={300}
-                                src={nft.media[0]?.gateway}
-                                alt={nft.title}
-                              />
+                              <div className="indicator">
+                                {deployed && (
+                                  <span className="indicator-item badge badge-neutral">
+                                    {buddy.slice(0, 4)}...
+                                    {buddy.slice(buddy.length - 4)}
+                                  </span>
+                                )}
+                                <Image
+                                  width={280}
+                                  height={280}
+                                  src={nft.media[0]?.gateway}
+                                  alt={nft.title}
+                                />
+                              </div>
                               <a
                                 href={`https://goerli.etherscan.io/address/${buddy}`}
                                 target="_blank"
                                 rel="noreferrer"
                               >
                                 <button
-                                  className="absolute bottom-2 left-2 btn btn-circle bg-white bg-opacity-40 text-black btn-outline tooltip items-center grid"
+                                  className="absolute bottom-3 left-3 btn btn-circle bg-white bg-opacity-40 text-black btn-outline tooltip items-center grid"
                                   data-tip="Etherscan"
                                 >
                                   <svg
@@ -243,7 +246,7 @@ export default function NFTs() {
                               {!copied ? (
                                 <button
                                   onClick={() => copyAddress()}
-                                  className="absolute bottom-2 right-2 btn btn-circle bg-white bg-opacity-40 text-black btn-outline  tooltip items-center grid"
+                                  className="absolute bottom-3 right-3 btn btn-circle bg-white bg-opacity-40 text-black btn-outline  tooltip items-center grid"
                                   data-tip="Copy Address"
                                 >
                                   <svg
@@ -276,11 +279,20 @@ export default function NFTs() {
                               )}
                             </div>
                           </div>
-                          <div className="col-span-1 pt-4">
-                            <DeployAccount
-                              tokenContract={nft.contract.address}
-                              tokenId={nft.tokenId}
-                            />
+                          <div className="col-span-1 space-y-2">
+                            {!deployed ? (
+                              <DeployAccount
+                                tokenContract={nft.contract.address}
+                                tokenId={nft.tokenId}
+                                buddy={buddy as Address}
+                              />
+                            ) : (
+                              <p className="text-sm">
+                                This Buddy Is Deployed
+                                <br />
+                                Transaction support coming soon.
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>
