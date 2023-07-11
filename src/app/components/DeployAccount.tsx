@@ -1,4 +1,4 @@
-// import { TokenboundClient } from "@tokenbound/sdk";
+import { TokenboundClient } from "@tokenbound/sdk";
 import { useWalletClient, useNetwork } from "wagmi";
 import type { Address } from "viem";
 import { useState } from "react";
@@ -23,34 +23,34 @@ export default function DeployAccount({ tokenContract, tokenId }: Props) {
    * @param tokenContract The address of the NFT contract
    * @param tokenId The ID of the NFT
    */
-  // async function deployAccount() {
-  //   try {
-  //     setLoading(true);
-  //     // Instantiate the TokenboundClient
-  //     if (walletClient && chain) {
-  //       const tokenboundClient = new TokenboundClient({
-  //         //@ts-ignore
-  //         walletClient,
-  //         chainId: chain?.id,
-  //       });
+  async function deployAccount() {
+    try {
+      setLoading(true);
+      // Instantiate the TokenboundClient
+      if (walletClient && chain) {
+        const tokenboundClient = new TokenboundClient({
+          //@ts-ignore
+          walletClient,
+          chainId: chain?.id,
+        });
 
-  //       // Deploy the account
-  //       const account = await tokenboundClient.createAccount({
-  //         tokenContract,
-  //         tokenId,
-  //       });
-  //       // Set the account
-  //       console.log(account);
-  //       setBuddyAccount(account);
-  //       setSuccess("Account deployed successfully!");
-  //       setLoading(false);
-  //     }
-  //   } catch (err: any) {
-  //     console.log(err?.message);
-  //     setError("An error occured");
-  //     setLoading(false);
-  //   }
-  // }
+        // Deploy the account
+        const account = await tokenboundClient.createAccount({
+          tokenContract,
+          tokenId,
+        });
+        // Set the account
+        console.log(account);
+        setBuddyAccount(account);
+        setSuccess("Account deployed successfully!");
+        setLoading(false);
+      }
+    } catch (err: any) {
+      console.log(err?.message);
+      setError("An error occured");
+      setLoading(false);
+    }
+  }
 
   return (
     <>
@@ -59,7 +59,7 @@ export default function DeployAccount({ tokenContract, tokenId }: Props) {
       ) : (
         <button
           className="btn btn-primary"
-          // onClick={deployAccount}
+          onClick={deployAccount}
           type="button"
         >
           {loading ? "Deploying..." : "Deploy Account"}

@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { OwnedNFT, alchemy } from "../utils/constants";
-import { useAccount } from "wagmi";
+import { useAccount, useWalletClient, useNetwork } from "wagmi";
 import { usePagination } from "@mantine/hooks";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../public/img/logo.png";
 import Image from "next/image";
 import { Connected } from "./Connected";
 import DeployAccount from "./DeployAccount";
+import ErrorToast from "./ErrorToast";
+import { TokenboundClient } from "@tokenbound/sdk";
 
 export default function NFTs() {
   const [nfts, setNfts] = useState<OwnedNFT[]>([]); // NFTs owned by the connected address
@@ -17,8 +19,9 @@ export default function NFTs() {
   const [errorMsg, setErrorMsg] = useState(""); // Error message
   const [selectedNft, setSelectedNft] = useState<number | null>(null); // Selected NFT
   const [copied, setCopied] = useState(false); // Copied to clipboard
-  const [visible, setVisible] = useState(false); // Transaction visibility
   const [buddy, setBuddy] = useState(""); // Buddy Wallet
+  const { data: walletClient } = useWalletClient(); // Wallet client
+  const { chain } = useNetwork(); // Network
 
   /**
    * Get the NFT data for the connected address
@@ -71,6 +74,28 @@ export default function NFTs() {
     }
   }, [nfts]);
 
+  const handleAddress = async (tokenContract: string, tokenId: string) => {
+    try {
+      let tba = "";
+      // Instantiate the TokenboundClient
+      if (walletClient && chain) {
+        const tokenbound = new TokenboundClient({
+          //@ts-ignore
+          walletClient,
+          chainId: chain?.id,
+        });
+        // Get the ERC6551 address
+        tba = tokenbound.getAccount({
+          tokenContract,
+          tokenId,
+        });
+      }
+      setBuddy(tba); // Set the ERC721 address
+    } catch (err: any) {
+      setErrorMsg("An error occured while getting the address");
+    }
+  };
+
   // Logic to open and close the modal
   const openModal = () => {
     setModal(!modal);
@@ -91,11 +116,6 @@ export default function NFTs() {
     if (!modal) {
       setCopied(false);
     }
-  };
-
-  // Logic to switch between Asset and Transfer components
-  const handleVisibility = () => {
-    setVisible(!visible);
   };
 
   return (
@@ -126,7 +146,7 @@ export default function NFTs() {
                 onClick={() => {
                   setSelectedNft(index);
                   openModal();
-                  // handleAddress(nft.contract.address, nft.tokenId);
+                  handleAddress(nft.contract.address, nft.tokenId);
                 }}
                 className="btn btn-primary"
               >
@@ -246,26 +266,10 @@ export default function NFTs() {
                             </label>
                           </div>
                           <div className="col-span-1">
-                            {!visible ? (
-                              <div>
-                                {/* <Assets buddy={buddy} /> */}
-                                <DeployAccount
-                                  tokenContract={nft.contract.address}
-                                  tokenId={nft.tokenId}
-                                />
-                              </div>
-                            ) : (
-                              <div className="grid justify-center space-y-2 w-full">
-                                {/* <TransferTo buddy={buddy} name={nft.title} /> */}
-
-                                <button
-                                  className="btn btn-primary"
-                                  onClick={handleVisibility}
-                                >
-                                  View Available Assets
-                                </button>
-                              </div>
-                            )}
+                            <DeployAccount
+                              tokenContract={nft.contract.address}
+                              tokenId={nft.tokenId}
+                            />
                           </div>
                         </div>
                       </div>
@@ -285,6 +289,7 @@ export default function NFTs() {
           »
         </button>
       </div>
+      {errorMsg && <ErrorToast message={errorMsg} />}
     </Connected>
   );
 }

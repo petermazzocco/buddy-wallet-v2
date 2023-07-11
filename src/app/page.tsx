@@ -10,16 +10,14 @@ export default function Home() {
     <main className="min-h-screen">
       <div className="hero grid justify-center">
         <div className="hero-content text-center">
-          <div className="max-w-full mx-10">
-            <Disconnected>
-              <Image width={200} height={200} src={logo} alt="logo" />
-            </Disconnected>
+          <div className="max-w-full mx-10 grid justify-center place-items-center align-middle">
             <h1 className="text-6xl font-bold">Buddy Wallet</h1>
             <h2 className="pb-4 font-normal text-lg">
               View Your NFT&apos;s Buddy Wallet Using ERC6551
             </h2>
             {/* Render Connect Button only if user isn't connected */}
             <Disconnected>
+              <Image width={200} height={200} src={logo} alt="logo" />
               <ConnectKitButton />
             </Disconnected>
             {/* Render NFTS only if user is connected */}
