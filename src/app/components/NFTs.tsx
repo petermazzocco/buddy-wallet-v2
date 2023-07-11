@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { OwnedNFT, alchemy } from "../utils/constants";
-import { useAccount, useWalletClient, useNetwork } from "wagmi";
+import { OwnedNFT, alchemy, providerClient } from "../utils/constants";
+import { useAccount, useWalletClient, useNetwork, Address } from "wagmi";
 import { usePagination } from "@mantine/hooks";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../public/img/logo.png";
@@ -11,6 +11,7 @@ import { Connected } from "./Connected";
 import DeployAccount from "./DeployAccount";
 import ErrorToast from "./ErrorToast";
 import { TokenboundClient } from "@tokenbound/sdk";
+import { GetBytecodeReturnType } from "viem";
 
 export default function NFTs() {
   const [nfts, setNfts] = useState<OwnedNFT[]>([]); // NFTs owned by the connected address
@@ -21,7 +22,8 @@ export default function NFTs() {
   const [copied, setCopied] = useState(false); // Copied to clipboard
   const [buddy, setBuddy] = useState(""); // Buddy Wallet
   const { data: walletClient } = useWalletClient(); // Wallet client
-  const { chain } = useNetwork(); // Network
+  const { chain } = useNetwork(); // Chain ID
+  const [deployed, setDeployed] = useState(false); // Boolean for deployed account
 
   /**
    * Get the NFT data for the connected address
@@ -74,6 +76,7 @@ export default function NFTs() {
     }
   }, [nfts]);
 
+  // Find the ERC6551 address from the selected NFT
   const handleAddress = async (tokenContract: string, tokenId: string) => {
     try {
       let tba = "";
@@ -95,6 +98,31 @@ export default function NFTs() {
       setErrorMsg("An error occured while getting the address");
     }
   };
+
+  // Check if the ERC6551 address is deployed by checking the bytecode
+  // If the bytecode is empty, the address is not deployed
+  // If the bytecode is not empty, the address is deployed
+  async function checkDeployed() {
+    try {
+      // Check if the ERC721 address is deployed by passing buddy address
+      const bytecode: GetBytecodeReturnType = await providerClient.getBytecode({
+        address: buddy as Address,
+      });
+      console.log(bytecode);
+
+      // If the bytecode is undefined, the address is not deployed
+      if (bytecode == undefined) {
+        setDeployed(false);
+        // If the bytecode has a value, the address is deployed
+      } else if (bytecode != undefined) {
+        setDeployed(true);
+      }
+      console.log(deployed);
+    } catch (err: any) {
+      console.log(err?.message);
+      setErrorMsg("An error occured while deploying the address");
+    }
+  }
 
   // Logic to open and close the modal
   const openModal = () => {
@@ -147,6 +175,7 @@ export default function NFTs() {
                   setSelectedNft(index);
                   openModal();
                   handleAddress(nft.contract.address, nft.tokenId);
+                  checkDeployed();
                 }}
                 className="btn btn-primary"
               >
@@ -167,7 +196,7 @@ export default function NFTs() {
                           onClick={() => {
                             closeModal();
                           }}
-                          className="btn btn-circle btn-outline glass hover:btn-info text-black"
+                          className="btn btn-ghost btn-circle text-black"
                         >
                           x
                         </button>
@@ -184,29 +213,19 @@ export default function NFTs() {
                         <div className="grid xs:grid-cols-1 md:grid-cols-1 xs:space-x-0 md:space-x-4">
                           <div className="col-span-1">
                             <div className="relative">
-                              <img
+                              <Image
+                                width={300}
+                                height={300}
                                 src={nft.media[0]?.gateway}
-                                className="rounded-md w-72 h-72 object-cover"
                                 alt={nft.title}
-                                onError={(
-                                  e: React.SyntheticEvent<
-                                    HTMLImageElement,
-                                    Event
-                                  >
-                                ) => {
-                                  e.currentTarget.src = "./fallback.jpeg";
-                                  e.currentTarget.className =
-                                    "w-72 h-72 rounded-lg object-cover object-center";
-                                }}
                               />
-
                               <a
                                 href={`https://goerli.etherscan.io/address/${buddy}`}
                                 target="_blank"
                                 rel="noreferrer"
                               >
                                 <button
-                                  className="absolute bottom-2 left-2 btn btn-circle text-black glass hover:btn-info tooltip items-center grid"
+                                  className="absolute bottom-2 left-2 btn btn-circle bg-white bg-opacity-40 text-black btn-outline tooltip items-center grid"
                                   data-tip="Etherscan"
                                 >
                                   <svg
@@ -224,7 +243,7 @@ export default function NFTs() {
                               {!copied ? (
                                 <button
                                   onClick={() => copyAddress()}
-                                  className="absolute bottom-2 right-2 btn btn-circle text-black glass hover:btn-info tooltip items-center grid"
+                                  className="absolute bottom-2 right-2 btn btn-circle bg-white bg-opacity-40 text-black btn-outline  tooltip items-center grid"
                                   data-tip="Copy Address"
                                 >
                                   <svg
@@ -256,16 +275,8 @@ export default function NFTs() {
                                 </button>
                               )}
                             </div>
-                            <label className="label">
-                              <span className="label-text-alt">
-                                View On Etherscan
-                              </span>
-                              <span className="label-text-alt">
-                                Copy Address
-                              </span>
-                            </label>
                           </div>
-                          <div className="col-span-1">
+                          <div className="col-span-1 pt-4">
                             <DeployAccount
                               tokenContract={nft.contract.address}
                               tokenId={nft.tokenId}
