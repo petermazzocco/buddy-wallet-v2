@@ -215,7 +215,7 @@ export default function NFTs() {
                           </button>
                         ) : (
                           <button
-                            className="absolute bottom-2 right-2 btn btn-circle btn-success tooltip items-center grid"
+                            className="btn btn-ghost btn-sm  tooltip"
                             data-tip="Copied"
                           >
                             <svg
