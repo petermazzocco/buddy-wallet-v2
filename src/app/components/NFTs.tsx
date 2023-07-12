@@ -172,7 +172,7 @@ export default function NFTs() {
                   openModal();
                   handleAddress(nft.contract.address, nft.tokenId);
                 }}
-                className="btn btn-primary"
+                className="btn-sm btn-neutral rounded-md"
               >
                 View Buddy Wallet
               </button>
@@ -191,14 +191,45 @@ export default function NFTs() {
                           onClick={() => {
                             closeModal();
                           }}
-                          className="btn btn-ghost btn-circle text-black"
+                          className="btn btn-ghost btn-sm text-black"
                         >
                           x
                         </button>
 
-                        <div className="flex">
-                          <Image width={50} height={50} src={logo} alt="logo" />
-                        </div>
+                        {!copied ? (
+                          <button
+                            onClick={() => copyAddress()}
+                            className=" btn btn-ghost btn-sm  tooltip"
+                            data-tip="Copy Address"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              className="bi bi-front"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M0 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2H2a2 2 0 0 1-2-2V2zm5 10v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v5a2 2 0 0 1-2 2H5z" />
+                            </svg>
+                          </button>
+                        ) : (
+                          <button
+                            className="absolute bottom-2 right-2 btn btn-circle btn-success tooltip items-center grid"
+                            data-tip="Copied"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              className="bi bi-front"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M0 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2H2a2 2 0 0 1-2-2V2zm5 10v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v5a2 2 0 0 1-2 2H5z" />
+                            </svg>
+                          </button>
+                        )}
                       </div>
                       <h2 className="text-center text-xl sm:text-3xl mb-0 md:mb-2 text-black mt-6">
                         {nft.title}&apos;s Buddy Wallet
@@ -243,40 +274,6 @@ export default function NFTs() {
                                   </svg>
                                 </button>
                               </a>
-                              {!copied ? (
-                                <button
-                                  onClick={() => copyAddress()}
-                                  className="absolute bottom-3 right-3 btn btn-circle bg-white bg-opacity-40 text-black btn-outline  tooltip items-center grid"
-                                  data-tip="Copy Address"
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="16"
-                                    height="16"
-                                    fill="currentColor"
-                                    className="bi bi-front"
-                                    viewBox="0 0 16 16"
-                                  >
-                                    <path d="M0 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2H2a2 2 0 0 1-2-2V2zm5 10v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v5a2 2 0 0 1-2 2H5z" />
-                                  </svg>
-                                </button>
-                              ) : (
-                                <button
-                                  className="absolute bottom-2 right-2 btn btn-circle btn-success tooltip items-center grid"
-                                  data-tip="Copied"
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="16"
-                                    height="16"
-                                    fill="currentColor"
-                                    className="bi bi-front"
-                                    viewBox="0 0 16 16"
-                                  >
-                                    <path d="M0 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2H2a2 2 0 0 1-2-2V2zm5 10v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v5a2 2 0 0 1-2 2H5z" />
-                                  </svg>
-                                </button>
-                              )}
                             </div>
                           </div>
                           <div className="col-span-1 space-y-2">

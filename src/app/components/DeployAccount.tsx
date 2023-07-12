@@ -100,7 +100,7 @@ export default function DeployAccount({
       {!deployed && (
         <>
           <button
-            className="btn btn-primary"
+            className="btn-sm btn-neutral rounded-md"
             onClick={deployAccount}
             type="button"
           >
@@ -110,7 +110,7 @@ export default function DeployAccount({
             Deploying an account requires gas fees.
           </p>
           {txHash && (
-            <button className="btn btn-sm">
+            <button className="btn-sm btn-neutral rounded-md">
               <a
                 href={`https://goerli.etherscan.io/tx/${txHash}`}
                 target="_blank"
