@@ -15,14 +15,16 @@ export default function ExecuteCall({ buddy }: Props) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [hash, setHash] = useState("");
-  const [account, setAccount] = useState("");
   const [to, setTo] = useState("");
   const [value, setValue] = useState(0);
-  const [data, setData] = useState("");
-  // Execute a call on the Tokenbound contract
+
+  // Execute a call on the Tokenbound contract to send tokens
   async function executeCall() {
     try {
+      // Handle loading state
       setLoading(true);
+
+      // If the wallet client and chain are available, create a new Tokenbound client
       if (walletClient && chain) {
         const tokenboundClient = new TokenboundClient({
           //@ts-ignore
@@ -30,17 +32,21 @@ export default function ExecuteCall({ buddy }: Props) {
           chainId: chain?.id,
         });
 
+        // Execute the call
         const tx = await tokenboundClient.executeCall({
           account: buddy,
           to: to,
           value: BigInt(value),
           data: "",
         });
+        // Set the hash and loading state
         setHash(tx);
         console.log(tx);
         setLoading(false);
         setSuccess("Transaction sent successfully!");
       }
+
+      // Handle error state
     } catch (err: any) {
       console.log(err?.message);
       setError("An error occured.");
@@ -48,25 +54,32 @@ export default function ExecuteCall({ buddy }: Props) {
   }
   return (
     <div>
-      <form className="grid justify-center space-y-2">
+      <form className="grid justify-center space-y-2 w-full">
         <input
-          className="input input-bordered"
+          className="input input-bordered input-sm"
           placeholder="To Address"
           type="text"
           onChange={(e) => setTo(e.target.value)}
         />
         <input
-          className="input input-bordered"
+          className="input input-bordered input-sm"
           placeholder="Amount"
           type="number"
           onChange={(e) => setValue(Number(e.target.value))}
         />
-        <button className="btn btn-primary" onClick={executeCall} type="button">
-          Transact
+        <button
+          className="btn btn-neutral btn-sm rounded-md"
+          onClick={executeCall}
+          type="button"
+        >
+          {!loading ? "Send" : "Sending..."}
         </button>
-        {hash && <p className="text-xs">{hash}</p>}
+        {hash && (
+          <p className="text-xs text-left">
+            Hash: {hash.slice(0, 2)}...{hash.slice(hash.length - 4)}
+          </p>
+        )}
       </form>
-
       {success && <SuccessToast message={success} />}
       {error && <ErrorToast message={error} />}
     </div>

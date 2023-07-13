@@ -149,7 +149,7 @@ export default function NFTs() {
 
   return (
     <Connected>
-      <div className="grid lg:grid-cols-3 md:grid-cols-2 xs:grid-cols-1 gap-4">
+      <div className="grid lg:grid-cols-3 md:grid-cols-2 xs:grid-cols-1 gap-4 overflow-hidden">
         {/* Display only if connected and filter out removed NFTs */}
         {visibleNFTs
           ?.filter((nft: any) => nft.title !== "")
@@ -241,10 +241,16 @@ export default function NFTs() {
                             <div className="relative">
                               <div className="indicator">
                                 {deployed && (
-                                  <span className="indicator-item badge badge-neutral">
-                                    {buddy.slice(0, 4)}...
-                                    {buddy.slice(buddy.length - 4)}
-                                  </span>
+                                  <a
+                                    href={`https://goerli.etherscan.io/address/${buddy}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    <span className="indicator-item badge badge-neutral hover:badge-outline hover:bg-white">
+                                      {buddy.slice(0, 2)}...
+                                      {buddy.slice(buddy.length - 4)}
+                                    </span>
+                                  </a>
                                 )}
                                 <Image
                                   width={280}
@@ -253,27 +259,6 @@ export default function NFTs() {
                                   alt={nft.title}
                                 />
                               </div>
-                              <a
-                                href={`https://goerli.etherscan.io/address/${buddy}`}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                <button
-                                  className="absolute bottom-3 left-3 btn btn-circle bg-white bg-opacity-40 text-black btn-outline tooltip items-center grid"
-                                  data-tip="Etherscan"
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="16"
-                                    height="16"
-                                    fill="currentColor"
-                                    className="bi bi-search"
-                                    viewBox="0 0 16 16"
-                                  >
-                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                                  </svg>
-                                </button>
-                              </a>
                             </div>
                           </div>
                           <div className="col-span-1 space-y-2">
@@ -284,11 +269,8 @@ export default function NFTs() {
                                 buddy={buddy as Address}
                               />
                             ) : (
-                              <p className="text-sm">
-                                This Buddy Is Deployed
-                                <br />
-                                Transaction support coming soon.
-                              </p>
+                              <p className="text-xs">This Buddy Is Deployed.</p>
+                              // <ExecuteCall buddy={buddy as Address} />
                             )}
                           </div>
                         </div>

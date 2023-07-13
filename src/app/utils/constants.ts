@@ -1,6 +1,8 @@
 import { Alchemy, Network } from "alchemy-sdk";
 import { createPublicClient, createWalletClient, http, custom } from "viem";
 import { goerli, mainnet } from "viem/chains";
+import { useNetwork } from "wagmi";
+import { useState } from "react";
 
 export interface OwnedNFT {
   contract: {
@@ -20,24 +22,24 @@ export interface OwnedNFT {
 
 const ALCHEMY_API = process.env.NEXT_PUBLIC_ALCHEMY_API as string; // Mainnet API key
 const GOERLI_API = process.env.NEXT_PUBLIC_GOERLI as string; // Goerli API key
+const GOERLI_URL = `https://eth-goerli.g.alchemy.com/v2/${GOERLI_API}`; // Goerli URL
+const MAINNET_URL = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API}`; // Mainnet URL
 
 const config = {
-  apiKey: ALCHEMY_API,
-  network: Network.ETH_MAINNET,
+  apiKey: GOERLI_API,
+  network: Network.ETH_GOERLI,
 };
 
 export const alchemy = new Alchemy(config);
 
 export const providerClient = createPublicClient({
-  chain: mainnet,
-  transport: http(`https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API}`),
-  //https://eth-goerli.g.alchemy.com/v2/${GOERLI_API}
-  //https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API}
+  chain: goerli,
+  transport: http(GOERLI_URL),
 });
 
 export const walletClient = (account: any) =>
   createWalletClient({
     account,
-    chain: mainnet,
-    transport: http(`https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API}`),
+    chain: goerli,
+    transport: http(GOERLI_URL),
   });
