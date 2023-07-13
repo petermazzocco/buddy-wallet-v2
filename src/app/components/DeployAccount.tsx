@@ -1,10 +1,9 @@
-import { TokenboundClient } from "@tokenbound/sdk";
 import { useWalletClient, useNetwork } from "wagmi";
 import type { Address } from "viem";
 import { useState, useEffect } from "react";
 import SuccessToast from "./SuccessToast";
 import ErrorToast from "./ErrorToast";
-import { providerClient } from "../utils/constants";
+import { providerClient, tokenboundClient } from "../utils/constants";
 
 type Props = {
   tokenContract: Address;
@@ -19,7 +18,6 @@ export default function DeployAccount({
 }: Props) {
   const { chain } = useNetwork();
   const { data: walletClient } = useWalletClient();
-  const [buddyAccount, setBuddyAccount] = useState<Address>();
   const [txHash, setTxHash] = useState<Address>();
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -69,12 +67,6 @@ export default function DeployAccount({
       // Instantiate the TokenboundClient
       // Check for bytecode to see if the account is already deployed
       if (walletClient && chain && deployed === false) {
-        const tokenboundClient = new TokenboundClient({
-          //@ts-ignore
-          walletClient,
-          chainId: chain?.id,
-        });
-
         // Deploy the account
         const tx = await tokenboundClient.createAccount({
           tokenContract,
@@ -112,7 +104,7 @@ export default function DeployAccount({
           {txHash && (
             <button className="btn-sm btn-neutral rounded-md">
               <a
-                href={`https://goerli.etherscan.io/tx/${txHash}`}
+                href={`https://etherscan.io/tx/${txHash}`}
                 target="_blank"
                 rel="noreferrer"
               >

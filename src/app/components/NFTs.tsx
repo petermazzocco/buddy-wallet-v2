@@ -1,20 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { OwnedNFT, alchemy, providerClient } from "../utils/constants";
+import { alchemy, providerClient, tokenboundClient } from "../utils/constants";
 import { useAccount, useWalletClient, useNetwork, Address } from "wagmi";
 import { usePagination } from "@mantine/hooks";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "../public/img/logo.png";
 import Image from "next/image";
 import { Connected } from "./Connected";
 import DeployAccount from "./DeployAccount";
 import ErrorToast from "./ErrorToast";
-import { TokenboundClient } from "@tokenbound/sdk";
 import ExecuteCall from "./ExecuteCall";
+import type { OwnedNft } from "alchemy-sdk";
 
 export default function NFTs() {
-  const [nfts, setNfts] = useState<OwnedNFT[]>([]); // NFTs owned by the connected address
+  const [nfts, setNfts] = useState<OwnedNft[]>([]); // NFTs owned by the connected address
   const { address, isConnected } = useAccount(); // Connected address via Wagmi
   const [modal, setModal] = useState(false); // Modal for sending NFT
   const [errorMsg, setErrorMsg] = useState(""); // Error message
@@ -33,12 +32,12 @@ export default function NFTs() {
     async function getNftsForOwner() {
       if (isConnected) {
         try {
-          let nftArray = [] as OwnedNFT[];
+          let nftArray = [] as OwnedNft[];
           const nftsIterable = alchemy.nft.getNftsForOwnerIterator(
             address as string
           );
           for await (const nft of nftsIterable) {
-            nftArray.push(nft as OwnedNFT);
+            nftArray.push(nft as OwnedNft);
           }
           setNfts(nftArray);
         } catch (err: any) {
@@ -77,24 +76,16 @@ export default function NFTs() {
   }, [nfts]);
 
   // Find the ERC6551 address from the selected NFT
-  // Check if the ERC6551 address is deployed via bytecode
   const handleAddress = async (tokenContract: string, tokenId: string) => {
     try {
       let tba = "";
-      // Instantiate the TokenboundClient
       if (walletClient && chain) {
-        const tokenbound = new TokenboundClient({
-          //@ts-ignore
-          walletClient,
-          chainId: chain?.id,
-        });
-        // Get the ERC6551 address
-        tba = tokenbound.getAccount({
+        tba = tokenboundClient.getAccount({
           tokenContract,
           tokenId,
         });
       }
-      setBuddy(tba); // Set the ERC721 address
+      setBuddy(tba);
     } catch (err: any) {
       setErrorMsg("An error occured while getting the address");
     }
@@ -242,7 +233,7 @@ export default function NFTs() {
                               <div className="indicator">
                                 {deployed && (
                                   <a
-                                    href={`https://goerli.etherscan.io/address/${buddy}`}
+                                    href={`https://etherscan.io/address/${buddy}`}
                                     target="_blank"
                                     rel="noreferrer"
                                   >
@@ -269,8 +260,12 @@ export default function NFTs() {
                                 buddy={buddy as Address}
                               />
                             ) : (
-                              <p className="text-xs">This Buddy Is Deployed.</p>
-                              // <ExecuteCall buddy={buddy as Address} />
+                              <>
+                                <p className="text-xs">
+                                  Send ETH via this Buddy.
+                                </p>
+                                <ExecuteCall account={buddy as Address} />
+                              </>
                             )}
                           </div>
                         </div>

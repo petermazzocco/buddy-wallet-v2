@@ -1,52 +1,47 @@
-import { TokenboundClient } from "@tokenbound/sdk";
-import { useWalletClient, useNetwork, Address } from "wagmi";
+"use client";
+
+import { Address, useWalletClient } from "wagmi";
 import { useState } from "react";
 import ErrorToast from "./ErrorToast";
 import SuccessToast from "./SuccessToast";
+import { TokenboundClient } from "@tokenbound/sdk";
+import { goerli } from "viem/chains";
 
 type Props = {
-  buddy: Address;
+  account: Address;
 };
 
-export default function ExecuteCall({ buddy }: Props) {
-  const { chain } = useNetwork();
-  const { data: walletClient } = useWalletClient();
+export default function ExecuteCall({ account }: Props) {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [hash, setHash] = useState("");
   const [to, setTo] = useState("");
   const [value, setValue] = useState(0);
+  const { data: walletClient } = useWalletClient();
+
+  const tokenboundClient = new TokenboundClient({
+    //@ts-ignore
+    walletClient,
+    chainId: goerli.id,
+  });
 
   // Execute a call on the Tokenbound contract to send tokens
   async function executeCall() {
     try {
-      // Handle loading state
       setLoading(true);
+      // If the client or buddy address is not available, return
+      if (!tokenboundClient || !account) return;
 
-      // If the wallet client and chain are available, create a new Tokenbound client
-      if (walletClient && chain) {
-        const tokenboundClient = new TokenboundClient({
-          //@ts-ignore
-          walletClient,
-          chainId: chain?.id,
-        });
-
-        // Execute the call
-        const tx = await tokenboundClient.executeCall({
-          account: buddy,
-          to: to,
-          value: BigInt(value),
-          data: "",
-        });
-        // Set the hash and loading state
-        setHash(tx);
-        console.log(tx);
-        setLoading(false);
-        setSuccess("Transaction sent successfully!");
-      }
-
-      // Handle error state
+      const tx = await tokenboundClient.executeCall({
+        account: account,
+        to: to,
+        value: BigInt(value.toString()), // Replacement for 0n (preES2020)
+        data: "0x",
+      });
+      setHash(tx);
+      setSuccess("Transaction sent successfully!");
+      setLoading(false);
     } catch (err: any) {
       console.log(err?.message);
       setError("An error occured.");
