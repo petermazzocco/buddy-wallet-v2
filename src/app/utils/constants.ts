@@ -26,20 +26,20 @@ const GOERLI_URL = `https://eth-goerli.g.alchemy.com/v2/${GOERLI_API}`; // Goerl
 const MAINNET_URL = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API}`; // Mainnet URL
 
 const config = {
-  apiKey: GOERLI_API,
-  network: Network.ETH_GOERLI,
+  apiKey: ALCHEMY_API,
+  network: Network.ETH_MAINNET,
 };
 
 export const alchemy = new Alchemy(config);
 
 export const providerClient = createPublicClient({
-  chain: goerli,
-  transport: http(GOERLI_URL),
+  chain: mainnet,
+  transport: http(MAINNET_URL),
 });
 
 export const walletClient = (account: any) =>
   createWalletClient({
     account,
-    chain: goerli,
-    transport: http(GOERLI_URL),
+    chain: mainnet,
+    transport: http(MAINNET_URL),
   });
