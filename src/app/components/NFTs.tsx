@@ -262,9 +262,9 @@ export default function NFTs() {
                             ) : (
                               <>
                                 <p className="text-xs">
-                                  Send ETH via this Buddy.
+                                  This Buddy Is Deployed!
                                 </p>
-                                <ExecuteCall account={buddy as Address} />
+                                {/* <ExecuteCall account={buddy as Address} /> */}
                               </>
                             )}
                           </div>
