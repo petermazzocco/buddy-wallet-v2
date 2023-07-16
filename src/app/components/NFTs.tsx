@@ -9,8 +9,8 @@ import Image from "next/image";
 import { Connected } from "./Connected";
 import DeployAccount from "./DeployAccount";
 import ErrorToast from "./ErrorToast";
-import ExecuteCall from "./ExecuteCall";
 import type { OwnedNft } from "alchemy-sdk";
+import Link from "next/link";
 
 export default function NFTs() {
   const [nfts, setNfts] = useState<OwnedNft[]>([]); // NFTs owned by the connected address
@@ -75,7 +75,12 @@ export default function NFTs() {
     }
   }, [nfts]);
 
-  // Find the ERC6551 address from the selected NFT
+  /**
+   * @dev Get the address ERC6551 address from the NFTs
+   * @returns an address
+   * Maps over all the visible NFTs and gets the address for each one
+   */
+
   const handleAddress = async (tokenContract: string, tokenId: string) => {
     try {
       let tba = "";
@@ -84,10 +89,10 @@ export default function NFTs() {
           tokenContract,
           tokenId,
         });
+        setBuddy(tba);
       }
-      setBuddy(tba);
     } catch (err: any) {
-      setErrorMsg("An error occured while getting the address");
+      setErrorMsg("An error occurred while fetching addresses.");
     }
   };
 
@@ -150,23 +155,43 @@ export default function NFTs() {
               key={index}
             >
               <h2 className="label truncate text-ellipsis">{nft.title}</h2>
-              <img
+              <Image
                 src={nft.media[0]?.gateway}
-                className="rounded-lg object-center object-cover w-80 h-80"
                 alt={nft.title}
-              />
-
-              <button
-                type="button"
+                width={320}
+                height={320}
                 onClick={() => {
                   setSelectedNft(index);
                   openModal();
                   handleAddress(nft.contract.address, nft.tokenId);
                 }}
-                className="btn-sm btn-neutral rounded-md"
-              >
-                View Buddy Wallet
-              </button>
+                className="rounded-lg object-center object-cover hover:cursor-pointer "
+              />
+              <div className="flex flex-row justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedNft(index);
+                    openModal();
+                    handleAddress(nft.contract.address, nft.tokenId);
+                  }}
+                  className="btn-sm btn btn-ghost rounded-md"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="12"
+                    height="12"
+                    fill="currentColor"
+                    className="bi bi-arrows-fullscreen"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344 0a.5.5 0 0 1 .707 0l4.096 4.096V11.5a.5.5 0 1 1 1 0v3.975a.5.5 0 0 1-.5.5H11.5a.5.5 0 0 1 0-1h2.768l-4.096-4.096a.5.5 0 0 1 0-.707zm0-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707zm-4.344 0a.5.5 0 0 1-.707 0L1.025 1.732V4.5a.5.5 0 0 1-1 0V.525a.5.5 0 0 1 .5-.5H4.5a.5.5 0 0 1 0 1H1.732l4.096 4.096a.5.5 0 0 1 0 .707z"
+                    />
+                  </svg>
+                </button>
+              </div>
 
               {/* Modal component for selected NFT only */}
               <AnimatePresence>
@@ -248,11 +273,12 @@ export default function NFTs() {
                                   height={280}
                                   src={nft.media[0]?.gateway}
                                   alt={nft.title}
+                                  className="rounded-md"
                                 />
                               </div>
                             </div>
                           </div>
-                          <div className="col-span-1 space-y-2">
+                          <div className="col-span-1 pt-4">
                             {!deployed ? (
                               <DeployAccount
                                 tokenContract={nft.contract.address}
@@ -260,12 +286,32 @@ export default function NFTs() {
                                 buddy={buddy as Address}
                               />
                             ) : (
-                              <>
-                                <p className="text-xs">
-                                  This Buddy Is Deployed!
-                                </p>
-                                {/* <ExecuteCall account={buddy as Address} /> */}
-                              </>
+                              <Link
+                                href={`/eth/${
+                                  buddy as Address
+                                }?src=${encodeURIComponent(
+                                  nft.media[0]?.gateway
+                                )}&alt=${encodeURIComponent(
+                                  nft.title
+                                )}&name=${encodeURIComponent(nft.title)}`}
+                              >
+                                <button
+                                  className="btn btn-neutral btn-sm"
+                                  type="button"
+                                >
+                                  Open Wallet
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    className="bi bi-wallet"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M0 3a2 2 0 0 1 2-2h13.5a.5.5 0 0 1 0 1H15v2a1 1 0 0 1 1 1v8.5a1.5 1.5 0 0 1-1.5 1.5h-12A2.5 2.5 0 0 1 0 12.5V3zm1 1.732V12.5A1.5 1.5 0 0 0 2.5 14h12a.5.5 0 0 0 .5-.5V5H2a1.99 1.99 0 0 1-1-.268zM1 3a1 1 0 0 0 1 1h12V2H2a1 1 0 0 0-1 1z" />
+                                  </svg>
+                                </button>
+                              </Link>
                             )}
                           </div>
                         </div>

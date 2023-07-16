@@ -5,7 +5,11 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ["nft-cdn.alchemy.com", "ipfs.io"],
+    domains: [
+      "nft-cdn.alchemy.com",
+      "ipfs.io",
+      "us-central1-doxd-thenftysetup.cloudfunctions.net",
+    ],
     dangerouslyAllowSVG: true,
   },
   // Remove pino-pretty warning

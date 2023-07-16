@@ -5,10 +5,11 @@ import { Disconnected } from "./components/Disconnected";
 import { Connected } from "./components/Connected";
 import NFTs from "./components/NFTs";
 import Link from "next/link";
+import Toast from "./components/Toast";
 
 export default function Home() {
   return (
-    <main className="min-h-screen my-24">
+    <main className="min-h-screen my-16">
       <div className="hero grid justify-center">
         <div className="hero-content text-center">
           <div className="max-w-full mx-10 grid justify-center place-items-center align-middle">
@@ -45,6 +46,12 @@ export default function Home() {
           </h2>
         </Link>
       </div>
+      <Toast>
+        <p className="text-center">
+          We are currently experiencing issues with deploying <br />
+          accounts. We are working on a fix.
+        </p>
+      </Toast>
     </main>
   );
 }

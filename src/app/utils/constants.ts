@@ -4,6 +4,7 @@ import { Alchemy, Network } from "alchemy-sdk";
 import { createPublicClient, createWalletClient, http } from "viem";
 import { goerli, mainnet } from "viem/chains";
 import { TokenboundClient } from "@tokenbound/sdk";
+import { useState } from "react";
 
 const MAINNET_API = process.env.NEXT_PUBLIC_ALCHEMY_API as string; // Mainnet API key
 const GOERLI_API = process.env.NEXT_PUBLIC_GOERLI as string; // Goerli API key

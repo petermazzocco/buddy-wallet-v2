@@ -1,6 +1,6 @@
 export default function FAQ() {
   return (
-    <main className="min-h-screen my-24">
+    <main className="min-h-screen my-16">
       <div className=" text-center ">
         <h1 className="text-6xl font-bold">Buddy Wallet</h1>
         <h2 className="pb-4 font-normal text-lg">Have some questions?</h2>
