@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { alchemy, providerClient, tokenboundClient } from "../utils/constants";
+import { alchemy, providerClient } from "../utils/constants";
 import { useAccount, useWalletClient, useNetwork, Address } from "wagmi";
 import { usePagination } from "@mantine/hooks";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,6 +11,7 @@ import DeployAccount from "./DeployAccount";
 import ErrorToast from "./ErrorToast";
 import type { OwnedNft } from "alchemy-sdk";
 import Link from "next/link";
+import { TokenboundClient } from "@tokenbound/sdk";
 
 export default function NFTs() {
   const [nfts, setNfts] = useState<OwnedNft[]>([]); // NFTs owned by the connected address
@@ -80,6 +81,12 @@ export default function NFTs() {
    * @returns an address
    * Maps over all the visible NFTs and gets the address for each one
    */
+
+  const tokenboundClient = new TokenboundClient({
+    //@ts-ignore
+    walletClient,
+    chainId: chain?.id as number,
+  });
 
   const handleAddress = async (tokenContract: string, tokenId: string) => {
     try {

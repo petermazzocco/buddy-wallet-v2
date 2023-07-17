@@ -3,7 +3,8 @@ import type { Address } from "viem";
 import { useState, useEffect } from "react";
 import SuccessToast from "./SuccessToast";
 import ErrorToast from "./ErrorToast";
-import { providerClient, tokenboundClient } from "../utils/constants";
+import { providerClient } from "../utils/constants";
+import { TokenboundClient } from "@tokenbound/sdk";
 
 type Props = {
   tokenContract: Address;
@@ -16,13 +17,13 @@ export default function DeployAccount({
   tokenId,
   buddy,
 }: Props) {
-  const { chain } = useNetwork();
-  const { data: walletClient } = useWalletClient();
   const [txHash, setTxHash] = useState<Address>();
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [deployed, setDeployed] = useState(false);
+  const { chain } = useNetwork();
+  const { data: walletClient } = useWalletClient();
 
   /**
    * @dev Checks if the account is already deployed
@@ -31,9 +32,6 @@ export default function DeployAccount({
   useEffect(() => {
     const getBytecode = async () => {
       try {
-        // If no buddy is available then return
-        if (!buddy) return;
-
         // Get the bytecode of the buddy
         if (buddy) {
           const bytecode = await providerClient.getBytecode({
@@ -48,6 +46,8 @@ export default function DeployAccount({
           } else if (bytecode !== undefined) {
             setDeployed(true);
           }
+        } else if (!buddy) {
+          return;
         }
       } catch (err: any) {
         console.log(err?.message);
@@ -70,11 +70,17 @@ export default function DeployAccount({
       // Check for walletClient to be true (wallet connected)
       // Check for the right chain ID (1 for mainnet)
       if (walletClient && chain && deployed === false) {
-        // Transaction to deploy account
+        const tokenboundClient = new TokenboundClient({
+          //@ts-ignore
+          walletClient,
+          chainId: chain?.id,
+        });
+        // Deploy the account
         const tx = await tokenboundClient.createAccount({
           tokenContract,
           tokenId,
         });
+
         // Set states (tx hash, success message, loading)
         setTxHash(tx);
         setSuccess("Account deployed successfully!");

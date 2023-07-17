@@ -46,12 +46,12 @@ export default function Home() {
           </h2>
         </Link>
       </div>
-      <Toast>
+      {/* <Toast>
         <p className="text-center">
           We are currently experiencing issues with deploying <br />
           accounts. We are working on a fix.
         </p>
-      </Toast>
+      </Toast> */}
     </main>
   );
 }

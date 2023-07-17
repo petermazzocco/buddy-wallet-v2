@@ -3,8 +3,6 @@
 import { Alchemy, Network } from "alchemy-sdk";
 import { createPublicClient, createWalletClient, http } from "viem";
 import { goerli, mainnet } from "viem/chains";
-import { TokenboundClient } from "@tokenbound/sdk";
-import { useState } from "react";
 
 const MAINNET_API = process.env.NEXT_PUBLIC_ALCHEMY_API as string; // Mainnet API key
 const GOERLI_API = process.env.NEXT_PUBLIC_GOERLI as string; // Goerli API key
@@ -29,9 +27,3 @@ export const walletClient = (account: any) =>
     chain: mainnet,
     transport: http(MAINNET_URL),
   });
-
-export const tokenboundClient = new TokenboundClient({
-  //@ts-ignore
-  walletClient,
-  chainId: mainnet.id,
-});

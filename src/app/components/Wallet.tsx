@@ -246,9 +246,9 @@ export default function Wallet({ buddy }: Props) {
                     <span className="text-xs text-neutral">
                       Available [{nfts?.length}]:
                     </span>
-                    <Connected>
+                    {/* <Connected>
                       <AddAssets />
-                    </Connected>
+                    </Connected> */}
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {visibleNFTs?.map((nft: any, index: number) => (
@@ -289,9 +289,9 @@ export default function Wallet({ buddy }: Props) {
                     <span className="text-xs text-neutral">
                       Available [{tokens?.length}]:
                     </span>
-                    <Connected>
+                    {/* <Connected>
                       <AddAssets />
-                    </Connected>
+                    </Connected> */}
                   </div>
                   <div className="overflow-x-auto">
                     <table className="table">
