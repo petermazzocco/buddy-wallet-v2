@@ -3,9 +3,8 @@ import logo from "./public/img/logo.png";
 import { ConnectKitButton } from "./components/ConnectKitButton";
 import { Disconnected } from "./components/Disconnected";
 import { Connected } from "./components/Connected";
-import NFTs from "./components/NFTs";
+import WalletButton from "./components/WalletButton";
 import Link from "next/link";
-import Toast from "./components/Toast";
 
 export default function Home() {
   return (
@@ -24,7 +23,20 @@ export default function Home() {
             </Disconnected>
             {/* Render NFTS only if user is connected */}
             <Connected>
-              <NFTs />
+              <Image width={200} height={200} src={logo} alt="logo" />
+              <div className="flex flex-row space-x-14 ">
+                <WalletButton />
+                <Link href="/airdrop">
+                  <div className="indicator">
+                    <span className="indicator-item badge badge-warning text-white">
+                      NEW
+                    </span>
+                    <button className="btn btn-neutral text-white text-xl border-2">
+                      Airdrop
+                    </button>
+                  </div>
+                </Link>
+              </div>
             </Connected>
           </div>
         </div>
@@ -46,12 +58,6 @@ export default function Home() {
           </h2>
         </Link>
       </div>
-      {/* <Toast>
-        <p className="text-center">
-          We are currently experiencing issues with deploying <br />
-          accounts. We are working on a fix.
-        </p>
-      </Toast> */}
     </main>
   );
 }

@@ -1,9 +1,10 @@
 import { getDefaultConfig } from "connectkit";
 import { createConfig } from "wagmi";
-import { goerli, mainnet } from "wagmi/chains";
+import { goerli, mainnet, polygon, optimism } from "wagmi/chains";
 
-const walletConnectProjectId = "b78a90321fdf414247141fff7aded49c";
-const chains = [mainnet];
+const WC_ID = process.env.NEXT_PUBLIC_WALLETCONNECT as string;
+const walletConnectProjectId = WC_ID;
+const chains = [mainnet, polygon, optimism];
 export const config = createConfig(
   getDefaultConfig({
     autoConnect: true,

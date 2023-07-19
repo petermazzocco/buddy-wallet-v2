@@ -1,9 +1,9 @@
 import { useWalletClient, useNetwork } from "wagmi";
 import type { Address } from "viem";
 import { useState, useEffect } from "react";
-import SuccessToast from "./SuccessToast";
-import ErrorToast from "./ErrorToast";
-import { providerClient } from "../utils/constants";
+import SuccessToast from "../SuccessToast";
+import ErrorToast from "../ErrorToast";
+import { opProviderClient } from "../../utils/constants";
 import { TokenboundClient } from "@tokenbound/sdk";
 
 type Props = {
@@ -34,7 +34,7 @@ export default function DeployAccount({
       try {
         // Get the bytecode of the buddy
         if (buddy) {
-          const bytecode = await providerClient.getBytecode({
+          const bytecode = await opProviderClient.getBytecode({
             address: buddy,
           });
 
@@ -110,7 +110,7 @@ export default function DeployAccount({
           {txHash && (
             <button className="btn-sm btn-neutral rounded-md">
               <a
-                href={`https://etherscan.io/tx/${txHash}`}
+                href={`https://polygonscan.com/tx/${txHash}`}
                 target="_blank"
                 rel="noreferrer"
               >

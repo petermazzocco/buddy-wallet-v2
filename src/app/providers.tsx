@@ -11,9 +11,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   React.useEffect(() => setMounted(true), []);
   return (
     <WagmiConfig config={config}>
-      <ConnectKitProvider theme="retro">
-        {mounted && children}
-      </ConnectKitProvider>
+      <ConnectKitProvider>{mounted && children}</ConnectKitProvider>
     </WagmiConfig>
   );
 }

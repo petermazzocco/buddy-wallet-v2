@@ -17,6 +17,7 @@
 }
 
 h1,
+button,
 h2 {
   font-family: "Bebas Neue", sans-serif;
   font-weight: normal;
@@ -24,7 +25,6 @@ h2 {
 
 h3,
 p,
-button,
 a,
 span,
 select {

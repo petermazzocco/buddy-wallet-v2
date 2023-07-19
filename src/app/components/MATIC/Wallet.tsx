@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { alchemy } from "../utils/constants";
+import { polyAlchemy } from "../../utils/constants";
 import {
   OwnedNft,
   AssetTransfersResponse,
@@ -10,15 +10,14 @@ import {
   OwnedToken,
 } from "alchemy-sdk";
 import { Address } from "wagmi";
-import ErrorToast from "./ErrorToast";
+import ErrorToast from "../ErrorToast";
 import Image from "next/image";
 import { usePagination } from "@mantine/hooks";
 import Link from "next/link";
 import { formatEther } from "viem";
 import { useSearchParams } from "next/navigation";
-import { providerClient } from "../utils/constants";
-import AddAssets from "./AddAssets";
-import { Connected } from "./Connected";
+import { polyProviderClient } from "../../utils/constants";
+import AddAssets from "../AddAssets";
 
 type Props = {
   buddy: Address;
@@ -52,7 +51,7 @@ export default function Wallet({ buddy }: Props) {
 
         // Get the bytecode of the buddy
         if (buddy) {
-          const bytecode = await providerClient.getBytecode({
+          const bytecode = await polyProviderClient.getBytecode({
             address: buddy,
           });
 
@@ -80,7 +79,7 @@ export default function Wallet({ buddy }: Props) {
     async function getNftsFromBuddy() {
       try {
         let nftArray = [] as OwnedNft[];
-        const nftsIterable = alchemy.nft.getNftsForOwnerIterator(
+        const nftsIterable = polyAlchemy.nft.getNftsForOwnerIterator(
           buddy as Address
         );
         for await (const nft of nftsIterable) {
@@ -103,7 +102,7 @@ export default function Wallet({ buddy }: Props) {
     async function getTokensFromBuddy() {
       try {
         let tokenArray = [] as OwnedToken[];
-        const allTokens = await alchemy.core.getTokensForOwner(
+        const allTokens = await polyAlchemy.core.getTokensForOwner(
           buddy as Address
         );
         for await (const token of allTokens.tokens) {
@@ -128,7 +127,7 @@ export default function Wallet({ buddy }: Props) {
     async function getTransactionsFromBuddy() {
       try {
         let allTransactions: AssetTransfersResponse =
-          await alchemy.core.getAssetTransfers({
+          await polyAlchemy.core.getAssetTransfers({
             fromBlock: "0x0",
             fromAddress: buddy as Address,
             excludeZeroValue: true,

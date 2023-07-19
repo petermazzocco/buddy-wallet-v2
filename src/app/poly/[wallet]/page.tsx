@@ -1,5 +1,5 @@
 import type { Address } from "viem";
-import Wallet from "../../components/ETH/Wallet";
+import Wallet from "../../components/MATIC/Wallet";
 import { ConnectKitButton } from "../../components/ConnectKitButton";
 import { Disconnected } from "@/app/components/Disconnected";
 import Toast from "@/app/components/Toast";

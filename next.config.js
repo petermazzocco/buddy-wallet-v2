@@ -9,6 +9,7 @@ const nextConfig = {
       "nft-cdn.alchemy.com",
       "ipfs.io",
       "us-central1-doxd-thenftysetup.cloudfunctions.net",
+      "cryptologos.cc",
     ],
     dangerouslyAllowSVG: true,
   },

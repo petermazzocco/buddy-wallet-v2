@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { alchemy, providerClient } from "../utils/constants";
+import { opProviderClient, opAlchemy } from "../../utils/constants";
 import { useAccount, useWalletClient, useNetwork, Address } from "wagmi";
 import { usePagination } from "@mantine/hooks";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Connected } from "./Connected";
+import { Connected } from "../Connected";
 import DeployAccount from "./DeployAccount";
-import ErrorToast from "./ErrorToast";
+import ErrorToast from "../ErrorToast";
 import type { OwnedNft } from "alchemy-sdk";
 import Link from "next/link";
 import { TokenboundClient } from "@tokenbound/sdk";
@@ -26,7 +26,7 @@ export default function NFTs() {
   const [deployed, setDeployed] = useState(false); // Boolean for deployed account
 
   /**
-   * Get the NFT data for the connected address
+   * Get the ETHEREUM NFT data for the connected address
    * @returns nfts
    */
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function NFTs() {
       if (isConnected) {
         try {
           let nftArray = [] as OwnedNft[];
-          const nftsIterable = alchemy.nft.getNftsForOwnerIterator(
+          const nftsIterable = opAlchemy.nft.getNftsForOwnerIterator(
             address as string
           );
           for await (const nft of nftsIterable) {
@@ -110,7 +110,7 @@ export default function NFTs() {
   useEffect(() => {
     async function fetchBytecode() {
       try {
-        const bytecode = await providerClient.getBytecode({
+        const bytecode = await opProviderClient.getBytecode({
           address: buddy as Address,
         });
         // If the bytecode is undefined, the address is not deployed
@@ -265,7 +265,7 @@ export default function NFTs() {
                               <div className="indicator">
                                 {deployed && (
                                   <a
-                                    href={`https://etherscan.io/address/${buddy}`}
+                                    href={`https://polygonscan.com/address/${buddy}`}
                                     target="_blank"
                                     rel="noreferrer"
                                   >
@@ -294,7 +294,7 @@ export default function NFTs() {
                               />
                             ) : (
                               <Link
-                                href={`/eth/${
+                                href={`/poly/${
                                   buddy as Address
                                 }?src=${encodeURIComponent(
                                   nft.media[0]?.gateway
@@ -303,7 +303,7 @@ export default function NFTs() {
                                 )}&name=${encodeURIComponent(nft.title)}`}
                               >
                                 <button
-                                  className="btn btn-neutral btn-sm"
+                                  className="btn btn-neutral text-lg"
                                   type="button"
                                 >
                                   Open Wallet
