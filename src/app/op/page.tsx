@@ -5,6 +5,7 @@ import Image from "next/image";
 import logo from "../public/img/logo.png";
 import { ConnectKitButton } from "../components/ConnectKitButton";
 import { Metadata } from "next";
+import ChainMenu from "../components/ChainMenu";
 
 export const metadata: Metadata = {
   title: "OPTIMISM - BUDDY WALLET",
@@ -29,11 +30,12 @@ export default function Page() {
             />
             {/* Render Connect Button only if user isn't connected */}
             <Disconnected>
-              <Image width={200} height={200} src={logo} alt="logo" />
+              <p>Connect Your Wallet To View</p>
               <ConnectKitButton />
             </Disconnected>
             {/* Render NFTS only if user is connected */}
             <Connected>
+              <ChainMenu />
               <NFTs />
             </Connected>
           </div>

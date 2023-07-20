@@ -17,7 +17,7 @@ export default function Page() {
         <div className="hero-content text-center">
           <div className="max-w-md mx-10 grid justify-center place-items-center align-middle space-y-6">
             <div>
-              <h2 className="text-2xl">Nested Rewards</h2>
+              <h2 className="text-2xl">Nested Rewards | Unlimited Potential</h2>
               <p>
                 Buddy Drop is an easy, all-in-one tool to airdrop all kinds of
                 tokens to ERC6551 compatible wallets. Great for gaming assets,

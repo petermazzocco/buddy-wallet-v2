@@ -16,28 +16,20 @@ export default function Home() {
             <h2 className="pb-4 font-normal text-lg">
               View Your NFT&apos;s Buddy Wallet Using ERC6551
             </h2>
-            {/* Render Connect Button only if user isn't connected */}
-            <Disconnected>
-              <Image width={200} height={200} src={logo} alt="logo" />
-              <ConnectKitButton />
-            </Disconnected>
-            {/* Render NFTS only if user is connected */}
-            <Connected>
-              <Image width={200} height={200} src={logo} alt="logo" />
-              <div className="flex flex-row space-x-14 ">
-                <WalletButton />
-                <Link href="/airdrop">
-                  <div className="indicator">
-                    <span className="indicator-item badge badge-warning text-white">
-                      NEW
-                    </span>
-                    <button className="btn btn-neutral text-white text-xl border-2">
-                      Airdrop
-                    </button>
-                  </div>
-                </Link>
-              </div>
-            </Connected>
+            <Image width={200} height={200} src={logo} alt="logo" />
+            <div className="flex flex-row space-x-14 ">
+              <WalletButton />
+              <Link href="/airdrop">
+                <div className="indicator">
+                  <span className="indicator-item badge badge-warning text-white">
+                    NEW
+                  </span>
+                  <button className="btn btn-neutral text-white text-xl border-2">
+                    Airdrop
+                  </button>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
