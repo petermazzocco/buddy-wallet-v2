@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "../public/img/logo.png";
 import { ConnectKitButton } from "./ConnectKitButton";
-import { Connected } from "./Connected";
 
 export default function Navbar() {
   return (
@@ -12,11 +11,9 @@ export default function Navbar() {
           <Image width={50} height={50} src={logo} alt="logo" />
         </Link>
       </div>
-      <Connected>
-        <div className="flex-none">
-          <ConnectKitButton />
-        </div>
-      </Connected>
+      <div className="flex-none">
+        <ConnectKitButton />
+      </div>
     </div>
   );
 }

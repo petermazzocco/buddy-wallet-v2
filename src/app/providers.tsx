@@ -11,7 +11,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
   React.useEffect(() => setMounted(true), []);
   return (
     <WagmiConfig config={config}>
-      <ConnectKitProvider>{mounted && children}</ConnectKitProvider>
+      <ConnectKitProvider
+        customTheme={{
+          "--ck-overlay-background": "rgba(0, 0, 0, 0.5)",
+          "--ck-connectbutton-font-size": "1.25rem",
+          "--ck-connectbutton-background": "#141524",
+          "--ck-body-background": "#141524",
+          "--ck-font-family": "Bebas Neue",
+        }}
+      >
+        {mounted && children}
+      </ConnectKitProvider>
     </WagmiConfig>
   );
 }
