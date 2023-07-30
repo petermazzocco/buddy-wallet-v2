@@ -14,11 +14,10 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="min-h-screen my-16">
+    <main className="min-h-screen my-8">
       <div className="hero grid justify-center">
         <div className="hero-content text-center">
           <div className="max-w-full mx-10 grid justify-center place-items-center align-middle">
-            <h1 className="text-6xl font-bold">Buddy Wallet</h1>
             <Image
               width={50}
               height={50}

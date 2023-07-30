@@ -11,7 +11,6 @@ import {
 } from "alchemy-sdk";
 import { Address } from "wagmi";
 import ErrorToast from "../ErrorToast";
-import Image from "next/image";
 import { usePagination } from "@mantine/hooks";
 import Link from "next/link";
 import { formatEther } from "viem";
@@ -205,12 +204,10 @@ export default function Wallet({ buddy }: Props) {
               <div className="w-full">
                 <h2 className="text-2xl">{name}</h2>
                 <div className="grid p-4">
-                  <Image
+                  <img
                     src={src || ""}
                     alt={alt || ""}
-                    width={480}
-                    height={480}
-                    className="rounded-md"
+                    className="rounded-md w-[480px] h-[480px]"
                   />
                 </div>
               </div>
@@ -252,12 +249,10 @@ export default function Wallet({ buddy }: Props) {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {visibleNFTs?.map((nft: any, index: number) => (
                       <div key={index}>
-                        <Image
+                        <img
                           src={nft.media[0]?.gateway}
-                          width={200}
-                          height={200}
                           alt="Image"
-                          className="rounded-lg"
+                          className="rounded-lg w-[200px] h-[200px]"
                         />
                       </div>
                     ))}

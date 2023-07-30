@@ -5,7 +5,6 @@ import { ethProviderClient, ethAlchemy } from "../../utils/constants";
 import { useAccount, useWalletClient, useNetwork, Address } from "wagmi";
 import { usePagination } from "@mantine/hooks";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { Connected } from "../Connected";
 import DeployAccount from "./DeployAccount";
 import ErrorToast from "../ErrorToast";
@@ -162,17 +161,15 @@ export default function NFTs() {
               key={index}
             >
               <h2 className="label truncate text-ellipsis">{nft.title}</h2>
-              <Image
+              <img
                 src={nft.media[0]?.gateway}
                 alt={nft.title}
-                width={320}
-                height={320}
                 onClick={() => {
                   setSelectedNft(index);
                   openModal();
                   handleAddress(nft.contract.address, nft.tokenId);
                 }}
-                className="rounded-lg object-center object-cover hover:cursor-pointer "
+                className="rounded-lg object-center object-cover hover:cursor-pointer w-[320px] h-[320px]"
               />
               <div className="flex flex-row justify-end pt-2">
                 <button
@@ -275,12 +272,10 @@ export default function NFTs() {
                                     </span>
                                   </a>
                                 )}
-                                <Image
-                                  width={280}
-                                  height={280}
+                                <img
                                   src={nft.media[0]?.gateway}
                                   alt={nft.title}
-                                  className="rounded-md"
+                                  className="rounded-md w-[280px] h-[280px] object-cover"
                                 />
                               </div>
                             </div>

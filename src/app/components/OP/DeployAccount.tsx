@@ -98,13 +98,13 @@ export default function DeployAccount({
       {!deployed && (
         <>
           <button
-            className="btn-sm btn-neutral rounded-md"
+            className="btn btn-neutral rounded-md text-xl"
             onClick={deployAccount}
             type="button"
           >
             {loading ? "Deploying..." : "Deploy Account"}
           </button>
-          <p className="text-[0.5rem]">
+          <p className="text-[0.5rem] text-gray-400 pt-1">
             Deploying an account requires gas fees.
           </p>
           {txHash && (

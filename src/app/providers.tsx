@@ -18,6 +18,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           "--ck-connectbutton-background": "#141524",
           "--ck-body-background": "#141524",
           "--ck-font-family": "Bebas Neue",
+          "--ck-connectbutton-border-radius": "0.4rem",
         }}
       >
         {mounted && children}

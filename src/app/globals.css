@@ -18,14 +18,15 @@
 
 h1,
 button,
-h2 {
+h2,
+li,
+a {
   font-family: "Bebas Neue", sans-serif;
   font-weight: normal;
 }
 
 h3,
 p,
-a,
 span,
 select {
   font-family: "Nunito", sans-serif;
