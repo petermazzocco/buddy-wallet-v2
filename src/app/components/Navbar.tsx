@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../public/img/logo.png";
+import logo from "../public/img/logo.webp";
 import { ConnectKitButton } from "./ConnectKitButton";
 
 export default function Navbar() {

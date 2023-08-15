@@ -12,6 +12,12 @@ import type { OwnedNft } from "alchemy-sdk";
 import Link from "next/link";
 import { TokenboundClient } from "@tokenbound/sdk";
 
+declare global {
+  interface Window {
+    my_modal: any;
+  }
+}
+
 export default function NFTs() {
   const [nfts, setNfts] = useState<OwnedNft[]>([]); // NFTs owned by the connected address
   const { address, isConnected } = useAccount(); // Connected address via Wagmi
@@ -166,7 +172,7 @@ export default function NFTs() {
                 alt={nft.title}
                 onClick={() => {
                   setSelectedNft(index);
-                  openModal();
+                  window.my_modal.showModal();
                   handleAddress(nft.contract.address, nft.tokenId);
                 }}
                 className="rounded-lg object-center object-cover hover:cursor-pointer w-[320px] h-[320px]"

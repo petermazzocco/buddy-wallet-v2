@@ -3,7 +3,7 @@
 import { ConnectKitProvider } from "connectkit";
 import * as React from "react";
 import { WagmiConfig } from "wagmi";
-
+import { ThirdwebSDKProvider } from "@thirdweb-dev/react";
 import { config } from "../wagmi";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -21,7 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           "--ck-connectbutton-border-radius": "0.4rem",
         }}
       >
-        {mounted && children}
+        <ThirdwebSDKProvider>{mounted && children}</ThirdwebSDKProvider>
       </ConnectKitProvider>
     </WagmiConfig>
   );

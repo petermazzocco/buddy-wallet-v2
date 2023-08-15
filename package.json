@@ -11,6 +11,8 @@
   "dependencies": {
     "@mantine/hooks": "^6.0.16",
     "@prisma/client": "^4.16.2",
+    "@thirdweb-dev/react": "^3.14.31",
+    "@thirdweb-dev/sdk": "^3.10.50",
     "@tokenbound/sdk": "^0.3.0",
     "@types/node": "20.4.1",
     "@types/react": "18.2.14",
@@ -18,6 +20,7 @@
     "alchemy-sdk": "^2.9.2",
     "autoprefixer": "10.4.14",
     "connectkit": "^1.4.0",
+    "ethers": "^5.7.2",
     "framer-motion": "^10.12.18",
     "next": "^13.4.10",
     "postcss": "8.4.25",

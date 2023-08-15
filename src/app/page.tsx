@@ -1,5 +1,5 @@
 import Image from "next/image";
-import logo from "./public/img/logo.png";
+import logo from "./public/img/logo.webp";
 import { ConnectKitButton } from "./components/ConnectKitButton";
 import { Disconnected } from "./components/Disconnected";
 import { Connected } from "./components/Connected";
