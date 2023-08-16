@@ -24,9 +24,12 @@ export default function FindTokens({ name, nftAddress }: Props) {
   const { address, isConnected } = useAccount();
   const [errorMsg, setErrorMsg] = useState("");
   const [amount, setAmount] = useState<number>();
-  const [toAddress, setToAddress] = useState<Address>();
-  const [tokenContract, setTokenContract] = useState();
   const [nfts, setNfts] = useState<Nft[]>([]);
+  const [allNftsChecked, setAllNftsChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedToken, setSelectedToken] = useState<string | undefined>(
+    undefined
+  );
 
   /**
    * Get the EC20 tokens for the connected address
@@ -60,6 +63,7 @@ export default function FindTokens({ name, nftAddress }: Props) {
     async function getNFTsFromAddress() {
       if (isConnected && nftAddress) {
         try {
+          setLoading(true);
           let allNfts = [];
           let nftsIterable =
             ethAlchemy.nft.getNftsForContractIterator(nftAddress);
@@ -67,6 +71,7 @@ export default function FindTokens({ name, nftAddress }: Props) {
             allNfts.push(nft);
           }
           setNfts(allNfts);
+          setLoading(false);
         } catch (err: any) {
           setErrorMsg("An error occurred while fetching tokens");
           console.log(err?.message);
@@ -116,8 +121,13 @@ export default function FindTokens({ name, nftAddress }: Props) {
                 type="number"
                 placeholder="Enter Amount"
                 className="input input-bordered input-sm w-full max-w-xs join-item"
+                onChange={(e) => setAmount(parseInt(e.target.value))}
               />
-              <select className="select select-bordered select-sm w-full max-w-xs join-item">
+              <select
+                className="select select-bordered select-sm w-full max-w-xs join-item"
+                onChange={(e) => setSelectedToken(e.target.value)}
+                value={selectedToken}
+              >
                 <option disabled defaultValue={"Select A Token"}>
                   Select A Token
                 </option>
@@ -127,36 +137,56 @@ export default function FindTokens({ name, nftAddress }: Props) {
               </select>
             </div>
             <div className="form-control">
-              <label className="label cursor-pointer">
-                <h2 className="text-md text-accent">Airdrop To All?</h2>
+              <label
+                className="label cursor-pointer"
+                onClick={() => setAllNftsChecked(!allNftsChecked)}
+              >
+                <h2 className="text-md text-accent">Airdrop To All NFTs</h2>
                 <input
                   type="checkbox"
                   defaultChecked
+                  checked={allNftsChecked}
                   className="checkbox checkbox-sm checkbox-accent"
                 />
               </label>
             </div>
-            {visibleNFTs.map((nft, i) => (
-              <>
-                <div className="grid grid-cols-3 justify-center">
-                  <div className="col-span-1" key={i}>
-                    <p>{nft?.title}</p>
+            {allNftsChecked
+              ? null
+              : loading && (
+                  <span className="justify-self-center loading loading-dots loading-lg"></span>
+                )}
+            {allNftsChecked
+              ? null
+              : visibleNFTs.map((nft, i) => (
+                  <>
+                    <div className="grid grid-cols-3 justify-center">
+                      <div className="col-span-1" key={i}>
+                        <p>{nft?.title}</p>
+                      </div>
+                    </div>
+                  </>
+                ))}
+            {allNftsChecked
+              ? null
+              : visibleNFTs.length > 0 && (
+                  <div className="btn-group flex justify-center items-center mt-20 gap-4">
+                    <button
+                      className="btn btn-ghost"
+                      type="button"
+                      onClick={pagination.previous}
+                    >
+                      «
+                    </button>
+                    <h2>{pagination.active}</h2>
+                    <button
+                      className="btn btn-ghost"
+                      type="button"
+                      onClick={pagination.next}
+                    >
+                      »
+                    </button>
                   </div>
-                </div>
-                <div className="btn-group flex justify-center items-center mt-20 gap-4">
-                  <button
-                    className="btn btn-ghost"
-                    onClick={pagination.previous}
-                  >
-                    «
-                  </button>
-                  <h2>{pagination.active}</h2>
-                  <button className="btn btn-ghost" onClick={pagination.next}>
-                    »
-                  </button>
-                </div>
-              </>
-            ))}
+                )}
             <button
               className="btn btn-sm text-lg w-1/2 btn-secondary justify-self-center"
               type="button"

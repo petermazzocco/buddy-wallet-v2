@@ -4,17 +4,15 @@ import { Connected } from "../../components/Connected";
 import { Disconnected } from "../../components/Disconnected";
 import { ConnectKitButton } from "connectkit";
 import { ethAlchemy } from "../../utils/constants";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAccount } from "wagmi";
-import type { Nft, NftContract } from "alchemy-sdk";
-import { usePagination } from "@mantine/hooks";
+import type { NftContract } from "alchemy-sdk";
 import ErrorToast from "@/app/components/ErrorToast";
 import FindTokens from "./FindTokens";
 
 export default function BuddyDrop() {
   const [nftContract, setNftContract] = useState("");
-  const { address, isConnected } = useAccount();
-  const [nfts, setNfts] = useState<Nft[]>([]);
+  const { isConnected } = useAccount();
   const [nftMetadata, setNftMetadata] = useState<NftContract>();
   const [errorMsg, setErrorMsg] = useState("");
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -29,7 +27,7 @@ export default function BuddyDrop() {
         const response = await ethAlchemy.nft.getContractMetadata(nftContract);
         setNftMetadata(response);
       } catch (err: any) {
-        setErrorMsg("An error occurred while fetching contract metadata");
+        setErrorMsg("An error occurred while fetching contract");
         console.log(err?.message);
       }
     }
