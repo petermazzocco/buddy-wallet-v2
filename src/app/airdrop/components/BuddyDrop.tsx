@@ -4,11 +4,12 @@ import { Connected } from "../../components/Connected";
 import { Disconnected } from "../../components/Disconnected";
 import { ConnectKitButton } from "connectkit";
 import { ethAlchemy } from "../../utils/constants";
-import { useState } from "react";
-import { useAccount } from "wagmi";
-import type { NftContract } from "alchemy-sdk";
+import { useState, useEffect } from "react";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import type { NftContract, Nft } from "alchemy-sdk";
 import ErrorToast from "@/app/components/ErrorToast";
-import FindTokens from "./FindTokens";
+import AirdropToAll from "./AirdropToAll";
+import AirdropToAddresses from "./AirdropToAddresses";
 
 export default function BuddyDrop() {
   const [nftContract, setNftContract] = useState("");
@@ -16,6 +17,14 @@ export default function BuddyDrop() {
   const [nftMetadata, setNftMetadata] = useState<NftContract>();
   const [errorMsg, setErrorMsg] = useState("");
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const { chain } = useNetwork();
+  const { isLoading, pendingChainId, switchNetwork } = useSwitchNetwork();
+  const [nfts, setNfts] = useState<Nft[]>([]);
+  const [allNftsChecked, setAllNftsChecked] = useState(false);
+  const [listOfNfts, setListOfNfts] = useState<string[]>([]);
+  const [selectedNfts, setSelectedNfts] = useState<string | undefined>(
+    undefined
+  );
 
   /**
    * Get Contract metadat from a project's contract address
@@ -34,19 +43,65 @@ export default function BuddyDrop() {
     if (!isConnected) return;
   }
 
+  /**
+   * Get all the NFTs from a project's contract address
+   * @returns nfts
+   */
+  useEffect(() => {
+    async function getNFTsFromAddress() {
+      if (isConnected && nftContract) {
+        try {
+          let allNfts = [];
+          let nftsIterable =
+            ethAlchemy.nft.getNftsForContractIterator(nftContract);
+          for await (const nft of nftsIterable) {
+            allNfts.push(nft);
+          }
+          setNfts(allNfts);
+        } catch (err: any) {
+          setErrorMsg("An error occurred while fetching tokens");
+          console.log(err?.message);
+        }
+      }
+      if (!isConnected && !nftContract) return;
+    }
+    getNFTsFromAddress();
+  }, [nftContract]);
+
   return (
     <div className="hero justify-center">
       <Disconnected>
+        <div className="place-items-center">
+          <h1 className=" text-center">
+            All-In-One Airdrop Tool for ERC6551 Accounts
+          </h1>
+          <div className="max-w-xs text-center my-4 space-y-2">
+            <p className="text-sm">
+              Buddy Drop is an easy, all-in-one tool to airdrop all kinds of
+              tokens to ERC6551 compatible wallets. Great for gaming assets,
+              reward tokens, and much more!
+            </p>
+          </div>
+        </div>
         <ConnectKitButton />
       </Disconnected>
       <Connected>
         <div className="place-items-center">
-          <h1 className="mb-4 text-center">
+          <h1 className=" text-center">
             All-In-One Airdrop Tool for ERC6551 Accounts
           </h1>
+          {!nftMetadata && (
+            <div className="max-w-xs text-center my-4 space-y-2">
+              <p className="text-sm">
+                Buddy Drop is an easy, all-in-one tool to airdrop all kinds of
+                tokens to ERC6551 compatible wallets. Great for gaming assets,
+                reward tokens, and much more!
+              </p>
+            </div>
+          )}
           {nftMetadata && (
             <div className="grid justify-center items-center my-10 w-full">
-              <div className="max-w-xs border border-neutral border-opacity-20 p-4 rounded-lg shadow-lg">
+              <div className=" w-80 border border-neutral border-opacity-20 p-4 rounded-lg shadow-lg">
                 <div className="flex flex-row justify-between items-center">
                   <h2 className="text-3xl truncate text-ellipsis w-3/4">
                     {nftMetadata.name}
@@ -104,29 +159,60 @@ export default function BuddyDrop() {
                   alt={nftMetadata.name}
                 />
                 <div className="w-full">
-                  <FindTokens
-                    name={nftMetadata.name}
-                    nftAddress={nftContract as `0x${string}`}
-                  />
+                  <div className="form-control">
+                    <label className="label cursor-pointer">
+                      <div className="flex flex-row items-center space-x-2">
+                        <h2 className="text-md text-neutral">
+                          Airdrop To All Buddy Wallets?
+                        </h2>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={allNftsChecked}
+                        className="checkbox checkbox-sm checkbox-neutral"
+                        onChange={(e) => setAllNftsChecked(e.target.checked)}
+                      />
+                    </label>
+                    {allNftsChecked ? (
+                      <AirdropToAll name={nftMetadata.name} />
+                    ) : (
+                      <AirdropToAddresses name={nftMetadata.name} />
+                    )}
+                  </div>
                 </div>
               </div>
+              <div className="divider"></div>
             </div>
           )}
-
-          <form className="grid justify-center space-y-4">
-            <input
-              className="input input-bordered input-sm input-lg"
-              placeholder="Enter Contract Address"
-              onChange={(e) => setNftContract(e.target.value)}
-            />
-            <button
-              className="btn btn-sm btn-neutral"
-              type="button"
-              onClick={getContractMetadata}
-            >
-              Find NFTs
-            </button>
-          </form>
+          {chain?.id === 1 ? (
+            <form className="grid justify-center space-y-2">
+              <h2 className="text-center">Enter A Valid Ethereum Address</h2>
+              <input
+                className="input input-bordered input-sm input-lg"
+                placeholder="0x000..."
+                onChange={(e) => setNftContract(e.target.value)}
+              />
+              <button
+                className="btn btn-sm btn-neutral text-lg"
+                type="button"
+                onClick={getContractMetadata}
+              >
+                Find NFTs
+              </button>
+            </form>
+          ) : (
+            <div className="grid justify-center">
+              <button
+                onClick={() => switchNetwork?.(1)} // 1 represents Ethereum's chainId
+                className="btn btn-sm btn-neutral m-2"
+                disabled={isLoading}
+              >
+                {isLoading && pendingChainId === 1
+                  ? "Waiting for Approval"
+                  : "Switch to Ethereum"}
+              </button>
+            </div>
+          )}
         </div>
       </Connected>
       {errorMsg && <ErrorToast message={errorMsg} />}
