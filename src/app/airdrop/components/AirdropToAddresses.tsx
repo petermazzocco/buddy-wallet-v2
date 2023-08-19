@@ -7,6 +7,7 @@ declare global {
 }
 interface Props {
   name: string | undefined;
+  tokenId: string[] | undefined;
 }
 
 import { ethAlchemy } from "../../utils/constants";
@@ -16,11 +17,7 @@ import type { OwnedToken } from "alchemy-sdk";
 import type { Address } from "viem";
 import ErrorToast from "@/app/components/ErrorToast";
 
-export default function AirdropToAddresses({ name }: Props) {
-  const [listOfNfts, setListOfNfts] = useState<string[]>([]);
-  const [selectedNfts, setSelectedNfts] = useState<string | undefined>(
-    undefined
-  );
+export default function AirdropToAddresses({ name, tokenId }: Props) {
   const [amount, setAmount] = useState<number>();
   const [selectedToken, setSelectedToken] = useState<string | undefined>(
     undefined
@@ -68,26 +65,7 @@ export default function AirdropToAddresses({ name }: Props) {
               Airdrop To Selected {name} Buddy Wallets
             </h2>
             <div className="divider"></div>
-            <div className="join">
-              <input
-                className="input input-bordered join-item w-full input-sm text-neutral"
-                placeholder="Enter Token ID"
-                type="number"
-                onChange={(e) => setSelectedNfts(e.target.value)}
-              />
-              <button
-                className="btn join-item btn-sm btn-neutral"
-                type="button"
-                onClick={() => {
-                  if (selectedNfts && !listOfNfts.includes(selectedNfts)) {
-                    setListOfNfts((prevList) => [...prevList, selectedNfts]);
-                    setSelectedNfts(""); // Clear the selected token after adding
-                  }
-                }}
-              >
-                Add To List
-              </button>
-            </div>
+            <div className="join"></div>
             <div className="join join-horizontal text-neutral ">
               <input
                 type="number"

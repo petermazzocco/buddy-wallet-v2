@@ -1,6 +1,7 @@
 import Image from "next/image";
 import airdrop from "../public/img/airdrop.png";
 import BuddyDrop from "./components/BuddyDrop";
+import AlertToast from "../components/AlertToast";
 
 export default function Page() {
   return (
@@ -14,6 +15,9 @@ export default function Page() {
         </div>
       </div>
       <BuddyDrop />
+      <AlertToast
+        message={`BuddyDrop is currently only available on Ethereum.\n Support for other chains coming soon.`}
+      />
     </div>
   );
 }

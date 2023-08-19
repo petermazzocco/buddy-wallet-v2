@@ -8,16 +8,19 @@ declare global {
 
 interface Props {
   name: string | undefined;
+  tokenId: string[] | undefined;
+  nftContract: string;
 }
 
 import { ethAlchemy } from "../../utils/constants";
 import { useState, useEffect } from "react";
 import type { Address } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount, useWalletClient, useNetwork } from "wagmi";
 import type { OwnedToken } from "alchemy-sdk";
 import ErrorToast from "@/app/components/ErrorToast";
+import { TokenboundClient } from "@tokenbound/sdk";
 
-export default function AirdropToAll({ name }: Props) {
+export default function AirdropToAll({ name, tokenId, nftContract }: Props) {
   const [tokens, setTokens] = useState<OwnedToken[]>([]);
   const { address, isConnected } = useAccount();
   const [errorMsg, setErrorMsg] = useState("");
@@ -25,6 +28,9 @@ export default function AirdropToAll({ name }: Props) {
   const [selectedToken, setSelectedToken] = useState<string | undefined>(
     undefined
   );
+  const [buddies, setBuddies] = useState<string[]>([]);
+  const { data: walletClient } = useWalletClient();
+  const { chain } = useNetwork();
 
   /**
    * Get the EC20 tokens for the connected address
@@ -50,11 +56,46 @@ export default function AirdropToAll({ name }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
 
+  /**
+   * @dev Get the address ERC6551 address from the NFTs
+   * @returns an address
+   * Maps over ALL NFTs and gets the address for each one
+   */
+
+  const tokenboundClient = new TokenboundClient({
+    //@ts-ignore
+    walletClient,
+    chainId: chain?.id as number,
+  });
+
+  const handleAddress = async (tokenContract: string, tokenId: string) => {
+    try {
+      let tba = "";
+      let tbaIterable = [];
+      if (walletClient && chain) {
+        tba = tokenboundClient.getAccount({
+          tokenContract,
+          tokenId,
+        });
+        for await (const address of tba) {
+          tbaIterable.push(address);
+        }
+        setBuddies(tbaIterable);
+      }
+    } catch (err: any) {
+      setErrorMsg("An error occurred while fetching addresses.");
+    }
+  };
+
   return (
     <div>
       <button
         className="btn btn-sm btn-secondary w-full"
-        onClick={() => window.my_modal.showModal()}
+        onClick={() => {
+          window.my_modal.showModal();
+          tokenId?.map((token) => handleAddress(nftContract, token));
+          console.log(tokenId?.map((token) => token));
+        }}
       >
         Airdrop To All Addresses
       </button>

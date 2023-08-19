@@ -174,9 +174,29 @@ export default function BuddyDrop() {
                       />
                     </label>
                     {allNftsChecked ? (
-                      <AirdropToAll name={nftMetadata.name} />
+                      <AirdropToAll
+                        name={nftMetadata.name}
+                        tokenId={nfts.map((nft) => nft.tokenId)}
+                        nftContract={nftContract}
+                      />
                     ) : (
-                      <AirdropToAddresses name={nftMetadata.name} />
+                      <div className="form-control w-full max-w-xs">
+                        <input
+                          type="text"
+                          className="input input-sm input-bordered w-full"
+                          placeholder="Enter Token IDs"
+                          onChange={(e) => setSelectedNfts(e.target.value)}
+                        />
+                        <label className="label">
+                          <span className="label-text-alt text-[.5rem]">
+                            Seperate Token ID's With Commas
+                          </span>
+                        </label>
+                        <AirdropToAddresses
+                          name={nftMetadata.name}
+                          tokenId={["1,2,3"]}
+                        />
+                      </div>
                     )}
                   </div>
                 </div>
