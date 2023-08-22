@@ -8,7 +8,7 @@ declare global {
 
 interface Props {
   name: string | undefined;
-  tokenId: string[] | undefined;
+  totalSupply: string | undefined;
   nftContract: string;
 }
 
@@ -20,7 +20,11 @@ import type { OwnedToken } from "alchemy-sdk";
 import ErrorToast from "@/app/components/ErrorToast";
 import { TokenboundClient } from "@tokenbound/sdk";
 
-export default function AirdropToAll({ name, tokenId, nftContract }: Props) {
+export default function AirdropToAll({
+  name,
+  totalSupply,
+  nftContract,
+}: Props) {
   const [tokens, setTokens] = useState<OwnedToken[]>([]);
   const { address, isConnected } = useAccount();
   const [errorMsg, setErrorMsg] = useState("");
@@ -31,6 +35,24 @@ export default function AirdropToAll({ name, tokenId, nftContract }: Props) {
   const [buddies, setBuddies] = useState<string[]>([]);
   const { data: walletClient } = useWalletClient();
   const { chain } = useNetwork();
+
+  // Convert the total supply to an integer
+  const totalSupplyInt = parseInt(totalSupply as string);
+  const [totalTokenIds, setTotalTokenIds] = useState<string[]>([]);
+
+  /**
+   * @dev Get all the tokenIds for the NFT
+   * @returns an array of tokenIds
+   * Maps over the total supply and adds each number to an array
+   */
+  useEffect(() => {
+    const tokenIds: string[] = [];
+
+    for (let id = 0; id < totalSupplyInt; id++) {
+      tokenIds.push(id.toString());
+    }
+    setTotalTokenIds(tokenIds);
+  }, [totalSupplyInt]);
 
   /**
    * Get the EC20 tokens for the connected address
@@ -71,16 +93,12 @@ export default function AirdropToAll({ name, tokenId, nftContract }: Props) {
   const handleAddress = async (tokenContract: string, tokenId: string) => {
     try {
       let tba = "";
-      let tbaIterable = [];
       if (walletClient && chain) {
         tba = tokenboundClient.getAccount({
           tokenContract,
           tokenId,
         });
-        for await (const address of tba) {
-          tbaIterable.push(address);
-        }
-        setBuddies(tbaIterable);
+        setBuddies((prevBuddy) => [...prevBuddy, tba]);
       }
     } catch (err: any) {
       setErrorMsg("An error occurred while fetching addresses.");
@@ -93,8 +111,9 @@ export default function AirdropToAll({ name, tokenId, nftContract }: Props) {
         className="btn btn-sm btn-secondary w-full"
         onClick={() => {
           window.my_modal.showModal();
-          tokenId?.map((token) => handleAddress(nftContract, token));
-          console.log(tokenId?.map((token) => token));
+          totalTokenIds.map((id) => {
+            handleAddress(nftContract, id);
+          });
         }}
       >
         Airdrop To All Addresses

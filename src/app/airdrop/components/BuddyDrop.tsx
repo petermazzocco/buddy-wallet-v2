@@ -22,9 +22,8 @@ export default function BuddyDrop() {
   const [nfts, setNfts] = useState<Nft[]>([]);
   const [allNftsChecked, setAllNftsChecked] = useState(false);
   const [listOfNfts, setListOfNfts] = useState<string[]>([]);
-  const [selectedNfts, setSelectedNfts] = useState<string | undefined>(
-    undefined
-  );
+  const [selectedNfts, setSelectedNfts] = useState<string[]>([]);
+  const [nftTotalSupply, setNftTotalSupply] = useState<string | undefined>("");
 
   /**
    * Get Contract metadat from a project's contract address
@@ -35,6 +34,7 @@ export default function BuddyDrop() {
       try {
         const response = await ethAlchemy.nft.getContractMetadata(nftContract);
         setNftMetadata(response);
+        setNftTotalSupply(response.totalSupply);
       } catch (err: any) {
         setErrorMsg("An error occurred while fetching contract");
         console.log(err?.message);
@@ -176,7 +176,7 @@ export default function BuddyDrop() {
                     {allNftsChecked ? (
                       <AirdropToAll
                         name={nftMetadata.name}
-                        tokenId={nfts.map((nft) => nft.tokenId)}
+                        totalSupply={nftTotalSupply}
                         nftContract={nftContract}
                       />
                     ) : (
@@ -185,16 +185,23 @@ export default function BuddyDrop() {
                           type="text"
                           className="input input-sm input-bordered w-full"
                           placeholder="Enter Token IDs"
-                          onChange={(e) => setSelectedNfts(e.target.value)}
+                          onChange={(e) => {
+                            const inputText = e.target.value;
+                            const tokenIds = inputText
+                              .split(",")
+                              .map((tokenId) => tokenId.trim());
+                            setSelectedNfts(tokenIds);
+                          }}
                         />
                         <label className="label">
                           <span className="label-text-alt text-[.5rem]">
-                            Seperate Token ID's With Commas
+                            Seperate Token ID's With Commas [1, 2, 3]
                           </span>
                         </label>
                         <AirdropToAddresses
                           name={nftMetadata.name}
-                          tokenId={["1,2,3"]}
+                          tokenId={selectedNfts}
+                          tokenContract={nftContract}
                         />
                       </div>
                     )}
